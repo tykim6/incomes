@@ -29,10 +29,12 @@ Building on the model presented previously, I update the model to take
 the *proportion* of wealthy incomes into account, as opposed to the absolute
 amount. Strictly, the wealthy proportion is the ratio between the
 number of returns that report incomes above $100k and the total number 
-of returns (of any income level).
+of returns (of any income level). Zip codes needed more than 5000 total
+returns (of any income level) to be considered. We can adjust this (5000) number
+as we see fit. 
 
-Below is an interactive map with the top 1\% of zip codes ranked by proportional
-wealth. You can see the zip code as well as the relative wealth of the zip code if
+Below is an interactive map with the top 1\% of zip codes (can also adjust this percentage)
+ranked by proportional wealth. You can see the zip code as well as the relative wealth of the zip code if
 you hover above the dot. The map supports dragging and zooming as well.
 '''
 )
