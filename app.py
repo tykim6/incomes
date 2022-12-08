@@ -2,7 +2,6 @@ import pandas as pd
 import streamlit as st
 import pydeck as pdk
 
-
 df = pd.read_csv("top_zips.csv")
 # Define a layer to display on a map
 layer = pdk.Layer(
@@ -22,5 +21,19 @@ layer = pdk.Layer(
 
 # Set the viewport location
 view_state = pdk.ViewState(latitude=39.8283, longitude=-98.5795, zoom=3, bearing=0, pitch=0)
+st.markdown('''
+# Zip Code Targeting
+## Proportional Wealth
 
+Building on the model presented previously, I update the model to take
+the *proportion* of wealthy incomes into account, as opposed to the absolute
+amount. Strictly, the wealthy proportion is the ratio between the
+number of returns that report incomes above $100k and the total number 
+of returns (of any income level).
+
+Below is an interactive map with the top 1\% of zip codes ranked by proportional
+wealth. You can see the zip code as well as the relative wealth of the zip code if
+you hover above the dot. The map supports dragging and zooming as well.
+'''
+)
 st.pydeck_chart(pdk.Deck(layers=[layer], initial_view_state=view_state, tooltip={"text": "Zipcode: {zipcode} \nWealthy Proportion: {wealthy_prop}%"}))
