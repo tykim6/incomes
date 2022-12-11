@@ -16,7 +16,7 @@ of returns (of any income level). Zip codes needed more than 5000 total
 returns (of any income level) to be considered. We can adjust this (5000) number
 as we see fit. 
 
-Below is an interactive map with the top 1\% of zip codes (can also adjust this percentage)
+Below is an interactive map with the top zip codes
 ranked by proportional high incomes. You can see the zip code as well as the relative wealth of the zip code if
 you hover above the dot. The map supports dragging and zooming as well.
 
@@ -26,7 +26,7 @@ you hover above the dot. The map supports dragging and zooming as well.
 
 percentile = st.selectbox(
     'Which top percentile of income would you like to see?',
-    ('1%', '5%', '10%'))
+    ('1%', '5%'))
 
 st.write('Currently Viewing Top ', percentile)
 
