@@ -3,8 +3,11 @@ import streamlit as st
 import pydeck as pdk
 
 # Set the viewport location
-view_state = pdk.ViewState(latitude=39.8283, longitude=-98.5795, zoom=3, bearing=0, pitch=0)
-st.markdown('''
+view_state = pdk.ViewState(
+    latitude=39.8283, longitude=-98.5795, zoom=3, bearing=0, pitch=0
+)
+st.markdown(
+    """
 # Zip Code Targeting
 ## Proportional Wealth
 
@@ -20,15 +23,17 @@ Below is an interactive map with the top zip codes
 ranked by proportional high incomes. You can see the zip code as well as the relative wealth of the zip code if
 you hover above the dot. The map supports dragging and zooming as well.
 
+Update: I have filtered out all states that Verijet does not service.
 
-'''
+
+"""
 )
 
 percentile = st.selectbox(
-    'Which top percentile of income would you like to see?',
-    ('1%', '5%'))
+    "Which top percentile of income would you like to see?", ("1%", "5%")
+)
 
-st.write('Currently Viewing Top ', percentile)
+st.write("Currently Viewing Top ", percentile)
 
 if percentile == "1%":
     df = pd.read_csv("1p_zips.csv")
@@ -52,4 +57,10 @@ layer = pdk.Layer(
     get_line_color=[0, 0, 0],
 )
 
-st.pydeck_chart(pdk.Deck(layers=[layer], initial_view_state=view_state, tooltip={"text": "Zipcode: {zipcode} \nWealthy Proportion: {wealthy_prop}%"}))
+st.pydeck_chart(
+    pdk.Deck(
+        layers=[layer],
+        initial_view_state=view_state,
+        tooltip={"text": "Zipcode: {zipcode} \nWealthy Proportion: {wealthy_prop}%"},
+    )
+)
