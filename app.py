@@ -61,6 +61,8 @@ st.pydeck_chart(
     pdk.Deck(
         layers=[layer],
         initial_view_state=view_state,
-        tooltip={"text": "Zipcode: {zipcode} \nWealthy Proportion: {wealthy_prop}%"},
+        tooltip={
+            "text": "Zipcode: {zipcode} \nWealthy Proportion: {wealthy_prop}%\nNumber of Returns: {all}"
+        },
     )
 )
