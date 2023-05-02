@@ -42,12 +42,16 @@ elif percentile == "5%":
 elif percentile == "10%":
     df = pd.read_csv("10p_zips.csv")
 
+
+df["zipcode"] = df["zipcode"].astype(str)
+
 # Filter options
 state_list = df["state"].unique().tolist()
 selected_state = st.multiselect("Filter by state:", state_list)
 
 df = df.dropna()
 # Filter the dataframe based on user input
+df["zipcode"] = df["zipcode"].astype(str)
 filtered_df = df.copy()
 
 if selected_state:
