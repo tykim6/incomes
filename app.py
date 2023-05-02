@@ -39,6 +39,8 @@ if percentile == "1%":
     df = pd.read_csv("1p_zips.csv")
 elif percentile == "5%":
     df = pd.read_csv("5p_zips.csv")
+elif percentile == "10%":
+    df = pd.read_csv("10p_zips.csv")
 
 
 # Define a layer to display on a map
