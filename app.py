@@ -104,5 +104,5 @@ st.pydeck_chart(
 
 
 # Display the filtered dataframe
-display_df = filtered_df[["zipcode", "state", "wealthy_prop"]"]]
+display_df = filtered_df[["zipcode", "state", "wealthy_prop"]]
 st.dataframe(display_df)
