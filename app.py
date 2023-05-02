@@ -6,6 +6,10 @@ import pydeck as pdk
 view_state = pdk.ViewState(
     latitude=39.8283, longitude=-98.5795, zoom=3, bearing=0, pitch=0
 )
+
+st.set_page_config(layout="wide")
+
+
 st.markdown(
     """
 # Zip Code Targeting
