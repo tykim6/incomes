@@ -1,6 +1,11 @@
 import pandas as pd
 import streamlit as st
 import pydeck as pdk
+import folium
+from folium.plugins import Draw
+import streamlit_folium as sf
+import base64
+
 
 # Set the viewport location
 view_state = pdk.ViewState(
@@ -49,6 +54,69 @@ elif percentile == "10%":
 
 df["zipcode"] = df["zipcode"].astype(str)
 
+# # Filter options
+# state_list = df["state"].unique().tolist()
+# selected_state = st.multiselect("Filter by state:", state_list)
+
+# df = df.dropna()
+# # Filter the dataframe based on user input
+# df["zipcode"] = df["zipcode"].astype(str)
+# filtered_df = df.copy()
+
+# if selected_state:
+#     filtered_df = filtered_df[filtered_df["state"].isin(selected_state)]
+
+
+# if selected_state:
+#     # Define a layer to display on a map
+#     layer = pdk.Layer(
+#         "ScatterplotLayer",
+#         filtered_df,
+#         pickable=True,
+#         opacity=0.8,
+#         stroked=True,
+#         filled=True,
+#         radius_scale=1,
+#         radius_min_pixels=5,
+#         line_width_min_pixels=1,
+#         get_position=["longitude", "latitude"],
+#         get_fill_color=[255, 140, 0],
+#         get_line_color=[0, 0, 0],
+#     )
+
+# else:
+#     # Define a layer to display on a map
+#     layer = pdk.Layer(
+#         "ScatterplotLayer",
+#         df,
+#         pickable=True,
+#         opacity=0.8,
+#         stroked=True,
+#         filled=True,
+#         radius_scale=1,
+#         radius_min_pixels=5,
+#         line_width_min_pixels=1,
+#         get_position=["longitude", "latitude"],
+#         get_fill_color=[255, 140, 0],
+#         get_line_color=[0, 0, 0],
+#     )
+
+# st.pydeck_chart(
+#     pdk.Deck(
+#         layers=[layer],
+#         initial_view_state=view_state,
+#         tooltip={
+#             "text": "Zipcode: {zipcode} \nWealthy Proportion: {wealthy_prop}%\nNumber of Returns: {all}"
+#         },
+#     )
+# )
+
+
+# # Display the filtered dataframe
+# display_df = filtered_df[["zipcode", "state", "wealthy_prop"]]
+# st.dataframe(display_df)
+
+
 # Filter options
 state_list = df["state"].unique().tolist()
 selected_state = st.multiselect("Filter by state:", state_list)
@@ -61,52 +129,54 @@ filtered_df = df.copy()
 if selected_state:
     filtered_df = filtered_df[filtered_df["state"].isin(selected_state)]
 
+# Create a folium map
+m = folium.Map(location=[37.7749, -122.4194], zoom_start=4)
 
-if selected_state:
-    # Define a layer to display on a map
-    layer = pdk.Layer(
-        "ScatterplotLayer",
-        filtered_df,
-        pickable=True,
-        opacity=0.8,
-        stroked=True,
-        filled=True,
-        radius_scale=1,
-        radius_min_pixels=5,
-        line_width_min_pixels=1,
-        get_position=["longitude", "latitude"],
-        get_fill_color=[255, 140, 0],
-        get_line_color=[0, 0, 0],
-    )
+# Add a marker for each data point in the filtered dataframe
+for _, row in filtered_df.iterrows():
+    tooltip_text = f"Zipcode: {row['zipcode']} <br> Wealthy Proportion: {row['wealthy_prop']}% <br> Number of Returns: {row['all']}"
+    folium.Marker(
+        location=[row["latitude"], row["longitude"]],
+        tooltip=tooltip_text,
+    ).add_to(m)
 
-else:
-    # Define a layer to display on a map
-    layer = pdk.Layer(
-        "ScatterplotLayer",
-        df,
-        pickable=True,
-        opacity=0.8,
-        stroked=True,
-        filled=True,
-        radius_scale=1,
-        radius_min_pixels=5,
-        line_width_min_pixels=1,
-        get_position=["longitude", "latitude"],
-        get_fill_color=[255, 140, 0],
-        get_line_color=[0, 0, 0],
-    )
+# Add the draw control
+draw = Draw(export=True)
+draw.add_to(m)
 
-st.pydeck_chart(
-    pdk.Deck(
-        layers=[layer],
-        initial_view_state=view_state,
-        tooltip={
-            "text": "Zipcode: {zipcode} \nWealthy Proportion: {wealthy_prop}%\nNumber of Returns: {all}"
-        },
-    )
-)
+# Display the map
+r = sf.components.html(m._repr_html_(), width=1000, height=500)
+selected_area = st.session_state.get("selected_area", None)
+
+# Filter the dataframe based on the drawn area
+if selected_area:
+    filtered_df = filtered_df[
+        (filtered_df["latitude"] >= selected_area["south"])
+        & (filtered_df["latitude"] <= selected_area["north"])
+        & (filtered_df["longitude"] >= selected_area["west"])
+        & (filtered_df["longitude"] <= selected_area["east"])
+    ]
 
 
 # Display the filtered dataframe
-display_df = filtered_df[["zipcode", "state", "wealthy_prop"]]
-st.dataframe(display_df)
+st.dataframe(filtered_df)
+
+# Add a button to export the filtered dataframe as a CSV file
+if st.button("Export CSV"):
+    # Filter the dataframe based on the drawn area
+    # You need to replace the coordinates in the filter with the actual coordinates from the drawn area
+    south, west, north, east = 38.8, -77.2, 39.0, -76.9
+    filtered_export_df = filtered_df[
+        (filtered_df["latitude"] >= south)
+        & (filtered_df["latitude"] <= north)
+        & (filtered_df["longitude"] >= west)
+        & (filtered_df["longitude"] <= east)
+    ]
+
+    # Convert the filtered dataframe to a CSV file
+    csv = filtered_export_df.to_csv(index=False)
+    b64 = base64.b64encode(csv.encode()).decode()  # Encode the CSV file to base64
+    href = f'<a href="data:file/csv;base64,{b64}" download="filtered_data.csv">Download CSV File</a>'
+
+    # Display the download link for the CSV file
+    st.markdown(href, unsafe_allow_html=True)
