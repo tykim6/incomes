@@ -3,5 +3,5 @@ streamlit
 pydeck
 folium
 streamlit_folium
-base64
+
 
