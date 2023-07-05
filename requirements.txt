@@ -1,0 +1,7 @@
+pandas
+streamlit
+pydeck
+folium
+streamlit_folium
+base64
+
